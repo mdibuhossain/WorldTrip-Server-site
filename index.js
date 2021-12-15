@@ -23,7 +23,7 @@ async function run() {
         const serviceCollection = database.collection('service');
         const blogPostCollection = database.collection('blogPost');
         const orderCollection = database.collection('orders');
-// 
+        // 
         app.get('/', (req, res) => {
             res.send('Running WorldTrip server');
         })
@@ -41,6 +41,14 @@ async function run() {
             const order = await cursor.toArray();
             res.send(order);
         });
+
+        // get specific order
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const findRes = await serviceCollection.findOne(query);
+            res.send(findRes);
+        })
 
         // Delete order
         app.delete('/orders/:id', async (req, res) => {
@@ -101,10 +109,16 @@ async function run() {
         // Post order 
         app.post('/orders', async (req, res) => {
             const order = req.body;
-            // console.log(order);
-            const result = await orderCollection.insertOne(order);
-            console.log(result);
-            res.json(result);
+            const id = req.body?._id;
+            const query = { _id: id };
+            const isOrderExist = await orderCollection.findOne(query);
+            if (!isOrderExist) {
+                const result = await orderCollection.insertOne(order);
+                res.json(result);
+            }
+            else {
+                res.json({ message: 'Order Already Purchased' });
+            }
         })
     }
     finally {
