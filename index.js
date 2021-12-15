@@ -22,8 +22,8 @@ async function run() {
         const database = client.db('WorldTrip');
         const serviceCollection = database.collection('service');
         const blogPostCollection = database.collection('blogPost');
-        const orderCollection = database.collection('order');
-
+        const orderCollection = database.collection('orders');
+// 
         app.get('/', (req, res) => {
             res.send('Running WorldTrip server');
         })
@@ -36,18 +36,18 @@ async function run() {
         });
 
         // Get order
-        app.get('/order', async (req, res) => {
+        app.get('/orders', async (req, res) => {
             const cursor = orderCollection.find({});
             const order = await cursor.toArray();
             res.send(order);
         });
 
         // Delete order
-        app.delete('/order/:id', async (req, res) => {
+        app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const finalRes = await orderCollection.deleteOne(query);
-            console.log('delete successfull', finalRes);
+            // console.log('delete successfull', finalRes);
             res.json(finalRes);
         })
 
@@ -99,11 +99,11 @@ async function run() {
         })
 
         // Post order 
-        app.post('/order', async (req, res) => {
+        app.post('/orders', async (req, res) => {
             const order = req.body;
-            // console.log('hit the order api', order);
+            // console.log(order);
             const result = await orderCollection.insertOne(order);
-            // console.log(result);
+            console.log(result);
             res.json(result);
         })
     }
@@ -113,7 +113,7 @@ async function run() {
 }
 run().catch(console.dir);
 
- 
+
 app.listen(port, () => {
     console.log('listening PORT', port);
 })
