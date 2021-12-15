@@ -53,9 +53,8 @@ async function run() {
         // Delete order
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectId(id) };
+            const query = { _id: id };
             const finalRes = await orderCollection.deleteOne(query);
-            // console.log('delete successfull', finalRes);
             res.json(finalRes);
         })
 
